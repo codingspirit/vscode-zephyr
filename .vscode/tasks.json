@@ -1,0 +1,140 @@
+{
+    // Crteated by Alex Li
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "zephyr env prepare",
+            "command": "rm -rf build; mkdir build; cd build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "zephyr cmake",
+            "command": "cmake",
+            "dependsOn": [
+                "zephyr env prepare"
+            ],
+            "args": [
+                "..",
+                "-DBOARD=$VS_CODE_BOARD_TO_BUILD",
+                "-B."
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build",
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "zephyr cmake ninja",
+            "command": "cmake",
+            "dependsOn": [
+                "zephyr env prepare"
+            ],
+            "args": [
+                "..",
+                "-DBOARD=$VS_CODE_BOARD_TO_BUILD",
+                "-B.",
+                "-GNinja"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build",
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "zephyr build",
+            "command": "make",
+            "dependsOn": "zephyr cmake",
+            "args": [
+                "-j6"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build",
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "zephyr build ninja",
+            "command": "ninja",
+            "dependsOn": "zephyr cmake ninja",
+            "args": [
+                "-j6"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build",
+            },
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "openocd flash and attach",
+            "command": "openocd",
+            "isBackground": true,
+            "args": [
+                "-f",
+                "boards/arm/$VS_CODE_BOARD_TO_BUILD/support/openocd.cfg",
+                "-c",
+                "init",
+                "-c",
+                "targets",
+                "-c",
+                "\"reset halt\"",
+                "-c",
+                "\"flash write_image erase build/zephyr/$VS_CODE_ZEPHYR_BIN_NAME\""
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+            },
+            "problemMatcher": [
+                {
+                    "owner": "custom",
+                    "pattern": [
+                        {
+                            "regexp": "Error:",
+                            "file": 1,
+                            "location": 2,
+                            "message": 3
+                        }
+                    ],
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": "Open On-Chip Debugger[\\s\\S]*",
+                        "endsPattern": "Info : Listening on port 4444 for telnet connections[\\s\\S]*"
+                    }
+                }
+            ]
+        },
+        {
+            "label": "remove openocd attach",
+            "type": "process",
+            "command": [
+                "${command:workbench.action.tasks.terminate}",
+                "${command:workbench.action.acceptSelectedQuickOpenItem}"
+            ],
+            "args": [
+                "openocd flash and attach"
+            ]
+        }
+    ],
+    "version": "2.0.0",
+    "options": {
+        "env": {
+            "ZEPHYR_TOOLCHAIN_VARIANT": "zephyr",
+            "ZEPHYR_SDK_INSTALL_DIR": "/home/alex/zephyr-sdk-0.10.3",
+            "ZEPHYR_BASE": "${workspaceFolder}/zephyrproject/zephyr",
+            "VS_CODE_BOARD_TO_BUILD": "reel_board",
+            "VS_CODE_ZEPHYR_BIN_NAME": "zephyr.elf",
+        }
+    }
+}
