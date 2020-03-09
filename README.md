@@ -30,7 +30,7 @@ This is an example [vscode](https://code.visualstudio.com/) settings to provide 
 - Press the holy **F5** button(which is on the right side of the **F4** button) to start debugging.
 - An selecting list will jump out when terminated debug process, don't forget to select it.
 
-## Know issues
+## Known issues
 - An exception will occur when stop at **main()**. Not sure where the root cause is, but debug process still can proceed, just ignore it.
 
 - Breakpoints can't be added into some lines but you can run code step by step to those lines. Disable zephyr build optimization doesn't help on this, it might related to zephyr toolchain.
