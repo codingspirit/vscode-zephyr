@@ -1,5 +1,5 @@
 # vscode-zephyr
-This is an example [vscode](https://code.visualstudio.com/) settings to provide supports for [zephyr](https://zephyrproject.org/) based projects build/debug.
+This is an example [vscode](https://code.visualstudio.com/) setting to provide supports for [zephyr](https://zephyrproject.org/) based projects build/debug.
 
 <!--more-->
 
